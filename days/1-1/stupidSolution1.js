@@ -1,0 +1,1 @@
+console.log(eval(require('fs').readFileSync('./data.txt', {encoding: 'utf-8'})));
