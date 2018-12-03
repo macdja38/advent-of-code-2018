@@ -2,7 +2,7 @@ const Benchmark = require('benchmark');
 const fs = require('fs');
 
 
-const strings = fs.readFileSync('./data.txt', {encoding: 'utf-8'})
+const strings = fs.readFileSync('./wayMoreData.txt', {encoding: 'utf-8'})
     .split('\n')
     .filter(number => number !== '');
 
@@ -35,11 +35,11 @@ suit
         return countResult.two * countResult.three;
     })
 
-    .add('b', () => {
+    .add('part 2 O(n^2)', () => {
         let splitStrings = strings.map(string => string.split(''));
 
-        return splitStrings.find(string => {
-            const result2 = splitStrings.find(string2 => {
+        return splitStrings.some(string => {
+            const result2 = splitStrings.some(string2 => {
                 if (string.reduce((acc, character, index) => {
                     if (string2[index] !== character) {
                         return acc + 1;
@@ -51,6 +51,61 @@ suit
             });
             if (result2) {
                 return [string, result2];
+            }
+        });
+
+    })
+
+    .add('part 2 O(n)', () => {
+        let splitStrings = strings.map(string => {
+            const firstHalfLength = Math.floor(string.length / 2);
+
+            return [string.slice(0, firstHalfLength), string.slice(firstHalfLength)]
+        });
+
+        let firstToSecond = {};
+        let secondToFirst = {};
+
+        splitStrings.forEach(([firstHalf, secondHalf]) => {
+            const firstHalfValue = (firstToSecond[firstHalf] || []);
+            firstHalfValue.push(secondHalf);
+            firstToSecond[firstHalf] = firstHalfValue;
+            const secondHalfValue = (secondToFirst[secondHalf] || []);
+            secondHalfValue.push(firstHalf);
+            secondToFirst[secondHalf] = secondHalfValue;
+        });
+
+
+        splitStrings.some(([firstHalf, secondHalf]) => {
+
+            const result2 = firstToSecond[firstHalf].some(secondHalfTry => {
+                if (secondHalfTry.split('').reduce((acc, character, index) => {
+                    if (secondHalf[index] !== character) {
+                        return acc + 1;
+                    }
+                    return acc;
+                }, 0) === 1) {
+                    return true;
+                }
+            });
+
+            if (result2) {
+                return true;
+            }
+
+            const result3 = secondToFirst[secondHalf].some(firstHalfTry => {
+                if (firstHalfTry.split('').reduce((acc, character, index) => {
+                    if (firstHalf[index] !== character) {
+                        return acc + 1;
+                    }
+                    return acc;
+                }, 0) === 1) {
+                    return true;
+                }
+            });
+
+            if (result3) {
+                return true;
             }
         });
 
