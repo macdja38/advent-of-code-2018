@@ -68,19 +68,22 @@ suit
 
         splitStrings.forEach(([firstHalf, secondHalf]) => {
             const firstHalfValue = (firstToSecond[firstHalf] || []);
-            firstHalfValue.push(secondHalf);
+            firstHalfValue.push(secondHalf.split(''));
             firstToSecond[firstHalf] = firstHalfValue;
             const secondHalfValue = (secondToFirst[secondHalf] || []);
-            secondHalfValue.push(firstHalf);
+            secondHalfValue.push(firstHalf.split(''));
             secondToFirst[secondHalf] = secondHalfValue;
         });
 
 
         splitStrings.some(([firstHalf, secondHalf]) => {
 
+            const firstHalfSplit = firstHalf.split('');
+            const secondHalfSplit = secondHalf.split('');
+
             const result2 = firstToSecond[firstHalf].some(secondHalfTry => {
-                if (secondHalfTry.split('').reduce((acc, character, index) => {
-                    if (secondHalf[index] !== character) {
+                if (secondHalfTry.reduce((acc, character, index) => {
+                    if (secondHalfSplit[index] !== character) {
                         return acc + 1;
                     }
                     return acc;
@@ -94,8 +97,8 @@ suit
             }
 
             const result3 = secondToFirst[secondHalf].some(firstHalfTry => {
-                if (firstHalfTry.split('').reduce((acc, character, index) => {
-                    if (firstHalf[index] !== character) {
+                if (firstHalfTry.reduce((acc, character, index) => {
+                    if (firstHalfSplit[index] !== character) {
                         return acc + 1;
                     }
                     return acc;
